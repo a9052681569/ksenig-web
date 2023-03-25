@@ -30,7 +30,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ksenig-web:latest
   trigger-deploy:
-    needs: build
+    needs: build-and-publish-image
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
