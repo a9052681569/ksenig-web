@@ -8,6 +8,8 @@ import { Content } from './Content/Content';
 export const App: FC = () => {
 	const id = useLoaderData();
 
+	console.log('hello vebonar');
+
 	useEffect(() => {
 		if (typeof id === 'string') {
 			localStorage.setItem('tempId', id);
