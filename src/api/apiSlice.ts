@@ -29,13 +29,13 @@ export const apiSlice = createApi({
 			}
 		}),
 		getTemoraryUser: builder.query<TemporaryUserData, string>({
-			query: (id: string) => '/temporary/' + id,
-			// запрос логина возвращает данные пользователя, сразу кладем их в кэш запроса данных пользователя
-			onCacheEntryAdded: reqData => {
-				if (reqData) {
-					localStorage.setItem('tempId', reqData);
-				}
-			}
+			query: (id: string) => '/temporary/' + id
+			// // запрос логина возвращает данные пользователя, сразу кладем их в кэш запроса данных пользователя
+			// onCacheEntryAdded: reqData => {
+			// 	if (reqData) {
+			// 		localStorage.setItem('tempId', reqData);
+			// 	}
+			// }
 		}),
 		getTemoraryUsers: builder.query<TemporaryUserData[], void>({
 			query: () => '/temporary'
