@@ -1,18 +1,18 @@
 import { FC, useEffect } from 'react';
-import { Link, Outlet, useLoaderData } from 'react-router-dom';
-import { useLoginMutation } from '../api/apiSlice';
+import { Outlet, useLoaderData } from 'react-router-dom';
 import './App.scss';
-import { Header } from './Header/Header';
 import { Content } from './Content/Content';
+import { Header } from './Header/Header';
+import { tempIdLocalStorageKey } from './constants';
+
+import { useRegisterSW } from 'virtual:pwa-register/react';
 
 export const App: FC = () => {
 	const id = useLoaderData();
 
-	console.log('hello vebonar');
-
 	useEffect(() => {
 		if (typeof id === 'string') {
-			localStorage.setItem('tempId', id);
+			localStorage.setItem(tempIdLocalStorageKey, id);
 		}
 	}, [id]);
 

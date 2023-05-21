@@ -1,27 +1,23 @@
-import { FC, useMemo } from 'react';
-import { useGetTemoraryUserQuery } from '../../../api/apiSlice';
-import { TemporaryUserData } from '../../../models/temp-user';
+import { FC } from 'react';
+import { useGetTemoraryUserQuery, useGetUserQuery } from '../../../api/apiSlice';
 import blackImg from '../../../assets/black.jpeg';
+import { tempIdLocalStorageKey } from '../../constants';
 
 export const Nda: FC = () => {
-	const { data: tempUserData } = useGetTemoraryUserQuery(localStorage.getItem('tempId') as string);
+	const { data: tempUserData } = useGetTemoraryUserQuery(localStorage.getItem(tempIdLocalStorageKey) || '');
 
-	const canSee = useMemo(() => {
-		if (tempUserData) {
-			return (tempUserData as unknown as TemporaryUserData).expiresAt - Date.now() > 0;
-		}
+	const { data: userData } = useGetUserQuery();
 
-		return null;
-	}, [tempUserData]);
-
-	if (canSee) {
+	// если есть данные временного пользователя и его время еще не истекло
+	if ((tempUserData && tempUserData.expiresAt - Date.now() > 0) || (userData && userData.roles.includes('Admin'))) {
 		return (
 			<div>
 				<h4>Привет сладкий</h4>
 				<img src={blackImg} />
 			</div>
 		);
-	} else if (canSee !== null) {
+		// если есть данные временного пользователя, но он уже не может смотреть
+	} else if (tempUserData) {
 		return (
 			<div>
 				<h4>Твой доступ истек, сладкий</h4>
