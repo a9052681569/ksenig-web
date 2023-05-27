@@ -1,0 +1,14 @@
+.temp-user-form {
+	width: 100%;
+	display: grid;
+	grid-template-columns:  repeat(auto-fill, minmax(250px, 1fr));
+	gap: 16px;
+
+	&__error {
+		color: red;
+	}
+}
+
+.temp-user-form-container {
+	width: 100%;
+}

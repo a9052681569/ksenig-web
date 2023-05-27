@@ -1,0 +1,56 @@
+@keyframes subscript-appears {
+	0% {
+		transform: translateY(-5px) scale(95%);
+	}
+
+	100% {
+		transform: translateY(0) scale(100%);
+	}
+}
+
+.input {
+    box-sizing: border-box;
+    padding-left: 10px;
+    color: #000;
+    width: 100%;
+    max-width: 684px;
+    height: 48px;
+    font-size: 14px;
+    border: 1px solid #c4c4c4;
+    border-radius: 12px;
+	outline: none;
+
+	&:disabled {
+		opacity: 0.4;
+	}
+
+	&--invalid {
+		border-color: rgba(255, 0, 0, 0.4);
+		background-color: rgba(255, 0, 0, 0.05);
+
+		&:focus {
+			background-color: transparent;
+		}
+	}
+}
+
+.formfield {
+	padding-bottom: 20px;
+	position: relative;
+	display: inline-block;
+
+	&__subscript {
+		position: absolute;
+		bottom: 0;
+		font-size: 14px;
+		line-height: 16px;
+		margin-top: 4px;
+		padding-left: 10px;
+		animation: subscript-appears 100ms ease-out;
+		max-width: 100%;
+
+		white-space: nowrap;
+  		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}

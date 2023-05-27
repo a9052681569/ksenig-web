@@ -1,12 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { UserData } from '../models/user';
+import { CreateTempUserFormData } from '../app/admin/CreateTempUserForm/CreateTempUserForm.types';
 import { LoginData } from '../app/admin/LoginForm/LoginForm.types';
 import { TemporaryUserData } from '../models/temp-user';
+import { UserData } from '../models/user';
 
 export const apiSlice = createApi({
 	reducerPath: 'api',
 	baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
-	tagTypes: ['User'],
+	tagTypes: ['User', 'TempUsers'],
 	endpoints: builder => ({
 		getUser: builder.query<UserData, void>({
 			query: () => ({
@@ -38,13 +39,62 @@ export const apiSlice = createApi({
 			// }
 		}),
 		getTemoraryUsers: builder.query<TemporaryUserData[], void>({
-			query: () => '/temporary'
+			query: () => '/temporary',
+			providesTags: ['TempUsers']
 		}),
-		createTemporaryUser: builder.mutation<TemporaryUserData, void>({
-			query: () => ({
+		createTemporaryUser: builder.mutation<TemporaryUserData, CreateTempUserFormData>({
+			query: (data: CreateTempUserFormData) => ({
 				url: '/temporary',
-				method: 'POST'
-			})
+				method: 'POST',
+				body: data
+			}),
+			onCacheEntryAdded: (reqData, { dispatch, cacheDataLoaded }) => {
+				cacheDataLoaded.then(({ data }) => {
+					const upcertUserAction = apiSlice.util.updateQueryData<'getTemoraryUsers'>(
+						'getTemoraryUsers',
+						undefined,
+						tempUsers => {
+							tempUsers.push(data);
+						}
+					);
+
+					dispatch(upcertUserAction);
+				});
+			}
+		}),
+		deleteTemporaryUser: builder.mutation<TemporaryUserData, string>({
+			query: (id: string) => ({
+				url: '/temporary/' + id,
+				method: 'DELETE'
+			}),
+			onCacheEntryAdded: (reqData, { dispatch, cacheDataLoaded }) => {
+				cacheDataLoaded.then(({ data }) => {
+					const upcertUserAction = apiSlice.util.updateQueryData<'getTemoraryUsers'>(
+						'getTemoraryUsers',
+						undefined,
+						tempUsers => tempUsers.filter(tempUser => tempUser.id !== data.id)
+					);
+
+					dispatch(upcertUserAction);
+				});
+			}
+		}),
+		refreshTemporaryUser: builder.mutation<TemporaryUserData, string>({
+			query: (id: string) => ({
+				url: '/temporary/' + id,
+				method: 'PUT'
+			}),
+			onCacheEntryAdded: (reqData, { dispatch, cacheDataLoaded }) => {
+				cacheDataLoaded.then(({ data }) => {
+					const upcertUserAction = apiSlice.util.updateQueryData<'getTemoraryUsers'>(
+						'getTemoraryUsers',
+						undefined,
+						tempUsers => tempUsers.map(tempUser => (tempUser.id === data.id ? data : tempUser))
+					);
+
+					dispatch(upcertUserAction);
+				});
+			}
 		})
 	})
 });
@@ -55,5 +105,7 @@ export const {
 	useLoginMutation,
 	useCreateTemporaryUserMutation,
 	useGetTemoraryUserQuery,
-	useGetTemoraryUsersQuery
+	useGetTemoraryUsersQuery,
+	useDeleteTemporaryUserMutation,
+	useRefreshTemporaryUserMutation
 } = apiSlice;
